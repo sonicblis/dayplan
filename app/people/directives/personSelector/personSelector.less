@@ -1,0 +1,19 @@
+person-selector{
+  img{
+    width: 40px;
+    border-radius: 30px;
+    border: solid 4px transparent;
+    -webkit-filter: grayscale(1);
+    -webkit-filter: grayscale(100%);
+    filter: gray;
+    filter: grayscale(100%);
+
+    &.selected{
+      -webkit-filter: grayscale(0);
+      -webkit-filter: grayscale(0%);
+      filter: none;
+      filter: grayscale(0%);
+      border: solid 4px #41bd56;
+    }
+  }
+}

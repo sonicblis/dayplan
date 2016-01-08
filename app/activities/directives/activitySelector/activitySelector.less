@@ -1,0 +1,181 @@
+@import '../../../../styles/colors';
+
+activity-selector {
+  display: block;
+  overflow: auto;
+
+  categories {
+    display: block;
+    overflow: auto;
+    z-index: 5;
+    position: relative;
+
+    category {
+      display: inline-block;
+      border: solid 1px #d2d2d2;
+      border-radius: 4px 4px 0 0;
+      padding: 5px;
+      font-size: 1em;
+      background: white;
+      vertical-align: top;
+      background: #eee;
+
+      &.active{
+        border-bottom-color: transparent;
+        border-bottom-width: 2px;
+        color: black;
+        background: @primary-back;
+      }
+    }
+  }
+
+  content{
+    border: solid 1px #d2d2d2;
+    display: block;
+    overflow: auto;
+    position: relative;
+    z-index: 4;
+    margin-top: -2px;
+    background: @primary-back;
+    border-radius: 0 5px 5px 5px;
+
+    toolbar {
+      display: block;
+      padding: 5px 10px;
+      height: 53px;
+      overflow: hidden;
+
+      tool {
+        font-size: 3em;
+        color: #ccc;
+
+        & > i {
+          position: relative;
+          top: -5px;
+        }
+
+        &.right {
+          float: right;
+          margin-left: 4px;
+        }
+      }
+
+      img {
+        width: 50px;
+        border-radius: 3em;
+      }
+    }
+
+    potential-activities {
+      display: block;
+      overflow: auto;
+      padding: 0 10px;
+
+      activity {
+        display: block;
+        border: solid 1px #ccc;
+        border-left: solid 12px #53955a;
+        padding: 5px;
+        background: white;
+        border-radius: 4px 20px 20px 4px;
+        margin-bottom: 10px;
+        font-size: 1.5em;
+      }
+    }
+
+    add-task{
+      padding: 10px;
+      display: block;
+      overflow: auto;
+
+      input{
+        padding: 5px;
+        font-size: 1.5em;
+        font-family: inherit;
+        border: solid 1px #ccc;
+        border-left: solid 12px #53955A;
+        width: calc(100% - 5px);
+        border-radius: 4px 20px 20px 4px;
+        outline: 0;
+      }
+
+      category{
+        display: block;
+        overflow: auto;
+        margin-bottom: 10px;
+
+        div{
+          display: inline-block;
+          padding: 10px;
+          background: white;
+          border: solid 1px #ccc;
+          border-radius: 5px;
+          width: calc(~'100% / 2 - 25px');
+          text-align: center;
+
+          &:first-child{
+            margin-right: 1px;
+          }
+
+          &.selected{
+            background: #557ecc;
+            color: white;
+            border-color: #395588;
+          }
+        }
+      }
+
+      day-selector{
+        display: block;
+        overflow: auto;
+        white-space: nowrap;
+
+        day-button{
+          display: inline-block;
+          overflow: auto;
+          padding: 4.6px;
+          margin-right: 5px;
+          border: solid 1px #ccc;
+          border-radius: 5px;
+          background: white;
+          text-align: center;
+          cursor: pointer;
+          width: calc(~'100% / 7 - 15.6px');
+
+          &:last-child{
+            margin-right: 0;
+          }
+
+          &.selected{
+            background: #557ecc;
+            color: white;
+            border-color: #395588;
+          }
+        }
+      }
+
+      button{
+        margin-top: 20px;
+        float: right;
+        margin-right: 10px;
+        width: 70px;
+        height: 70px;
+        border-radius: 305px;
+        border: solid 1px #ccc;
+        font-size: 1em;
+
+        &.warn{
+          background: #ffc703;
+          color: white;
+          border-color: #d7a500;
+        }
+
+        &.primary{
+          background: #557ecc;
+          color: white;
+          border-color: #395588;
+        }
+      }
+    }
+  }
+}

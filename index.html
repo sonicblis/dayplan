@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Day Plan</title>
+
+    <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Open+Sans' type='text/css'>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" type='text/css'>
+
+    <link href="/dist/all.css" rel="stylesheet"/>
+
+    <script src="/dist/thirdparty.js"></script>
+    <script src="/dist/all.js"></script>
+</head>
+<body ng-app="dayPlan">
+    <person-list ng-controller="peopleController">
+       <person ng-class="{'selected':person.$selected}" ng-repeat="person in people" ng-model="person"></person>
+    </person-list><person-day ng-controller="activitiesController">
+        <day>
+            <day-activity ng-repeat="activity in dayActivities" ng-model="activity"></day-activity>
+        </day>
+        <day-info>
+            <stats>
+                Here be stats
+            </stats>
+            <activities>
+                <activity-selector></activity-selector>
+            </activities>
+        </day-info>
+    </person-day>
+</body>
+</html>

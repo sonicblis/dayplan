@@ -1,0 +1,41 @@
+<div>
+    <categories>
+        <category class="active">Need To</category><category>Get To</category>
+    </categories>
+    <content>
+        <toolbar ng-if="!ui.addingTask">
+            <tool>
+                <i class="fa fa-plus-circle" ng-click="ui.addingTask = true"></i>
+            </tool>
+            <tool class="right">
+                <img src="https://lh3.googleusercontent.com/-rUeR1DgW5pE/AAAAAAAAAAI/AAAAAAAAAIY/7C9vqR49C5I/photo.jpg" />
+            </tool>
+            <tool class="right">
+                <img src="https://lh3.googleusercontent.com/-rUeR1DgW5pE/AAAAAAAAAAI/AAAAAAAAAIY/7C9vqR49C5I/photo.jpg" />
+            </tool>
+        </toolbar>
+        <potential-activities ng-if="!ui.addingTask">
+            <activity ng-repeat="activity in activities" ng-model="activity"></activity>
+        </potential-activities>
+        <add-task ng-if="ui.addingTask">
+            <input type="text" ng-model="task.name">
+            Hours: {{task.hours}} <input type="range" ng-model="task.hours" min="0" max="8" step="1">
+            Minutes: {{task.minutes}} <input type="range" ng-model="task.minutes" min="0" max="45" step="15">
+            <person-selector ng-model="task.participants" options="[{imgPath: 'https://lh3.googleusercontent.com/-rUeR1DgW5pE/AAAAAAAAAAI/AAAAAAAAAIY/7C9vqR49C5I/photo.jpg'},{imgPath: 'https://lh3.googleusercontent.com/-rUeR1DgW5pE/AAAAAAAAAAI/AAAAAAAAAIY/7C9vqR49C5I/photo.jpg'}]"></person-selector>
+            <category>
+                <div ng-click="task.category = 0" ng-class="{'selected': task.category == 0}">
+                    Get To
+                </div>
+                <div ng-click="task.category = 1" ng-class="{'selected': task.category == 1}">
+                    Need To
+                </div>
+            </category>
+            Auto Add On
+            <day-selector>
+                <day-button ng-class="{'selected': day.$selected}" ng-repeat="day in days" ng-click="toggleDay(day)">{{day.name}}</day-button>
+            </day-selector>
+            <button ng-click="saveTask(task)" class="primary">Save</button>
+            <button ng-click="resetTask(); ui.addingTask = false;" class="warn">Cancel</button>
+        </add-task>
+    </content>
+</div>

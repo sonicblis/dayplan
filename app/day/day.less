@@ -1,0 +1,44 @@
+@import '../../styles/colors';
+
+person-day{
+  display: inline-block;
+  vertical-align: top;
+  border: solid 1px #ccc;
+  margin-left: -1px;
+  background: @secondary-back;
+  position: relative;
+  z-index: 1;
+  width: calc(~'100vw - 80px');
+
+  day{
+    padding: 10px;
+    vertical-align: top;
+    display: inline-block;
+    overflow: auto;
+    width: calc(~'100vw / 2 - 50px');
+    height: calc(~'100vh - 40px');
+  }
+
+  day-info {
+    display: inline-block;
+    overflow: auto;
+    width: calc(~'100vw / 2 - 60px');
+
+    activities {
+      display: block;
+      overflow: auto;
+      vertical-align: top;
+    }
+
+    stats {
+      display: block;
+      overflow: auto;
+      background: white;
+      vertical-align: top;
+      padding: 10px;
+      border: solid 1px #ccc;
+      border-radius: 5px;
+      margin: 10px 0;
+    }
+  }
+}
