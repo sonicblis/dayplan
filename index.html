@@ -14,7 +14,8 @@
 </head>
 <body ng-app="dayPlan">
     <person-list ng-controller="peopleController">
-       <person ng-class="{'selected':person.$selected}" ng-repeat="person in people" ng-model="person"></person>
+        <person ng-click="$root.selectedPerson = person; " ng-class="{'selected':$root.selectedPerson == person}" ng-repeat="person in people" ng-model="person"></person>
+        <div ng-click="registerUser()" class="person"><i class="fa fa-plus-circle"></i></div>
     </person-list><person-day ng-controller="activitiesController">
         <day>
             <day-activity ng-repeat="activity in dayActivities" ng-model="activity"></day-activity>

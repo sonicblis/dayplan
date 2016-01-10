@@ -2,22 +2,20 @@ app.directive("personSelector", function () {
     return {
         restrict: 'E',
         scope: {
-            people: '=options',
             ngModel: '='
         },
         templateUrl: 'app/people/directives/personSelector/personSelector.html',
-        controller: ['$scope', function ($scope) {
+        controller: ['$scope', 'peopleProvider', function ($scope, peopleProvider) {
+            $scope.people = peopleProvider.people;
+            $scope.ngModel = $scope.ngModel || [];
             $scope.togglePerson = function(person){
-                if (!$scope.ngModel){
-                    $scope.ngModel = [];
-                }
-                if ($scope.ngModel.indexOf(person) > -1){
-                    $scope.ngModel.splice($scope.ngModel.indexOf(person),1);
-                    person.$selected = false;
+                if ($scope.ngModel.indexOf(person.$id) > -1){
+                    $scope.ngModel.splice($scope.ngModel.indexOf(person.$id),1);
+                    person.$picked = false;
                 }
                 else{
-                    $scope.ngModel.push(person);
-                    person.$selected = true;
+                    $scope.ngModel.push(person.$id);
+                    person.$picked = true;
                 }
             }
         }],

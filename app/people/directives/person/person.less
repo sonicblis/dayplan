@@ -7,16 +7,24 @@ person-list {
   position: relative;
   z-index: 2;
 
-  person {
+  person, .person {
     padding: 5px 5px 0px 5px;
     border: solid 1px #ccc;
+    height: 54px;
     display: block;
     border-radius: 2.5em 0 0 2.5em;
     background: #ccc;
+    color: white;
     -webkit-filter: grayscale(1);
     -webkit-filter: grayscale(100%);
     filter: gray;
     filter: grayscale(100%);
+
+    i{
+      font-size: 2.8em;
+      margin-top: 2px;
+      margin-left: 4px;
+    }
 
     img {
       border-radius: 3em;

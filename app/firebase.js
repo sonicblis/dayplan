@@ -3,6 +3,8 @@ var baseUrl = "https://dayplan.firebaseio.com";
 app.constant('firebase', {
     root: new Firebase(baseUrl),
     activities: new Firebase(baseUrl + "/activities"),
+    tasks: new Firebase(baseUrl + "/tasks"),
+    people: new Firebase(baseUrl + "/people"),
     events: {
         valueChanged: 'value',
         childAdded: 'child_added',
