@@ -4,6 +4,7 @@ app.constant('firebase', {
     root: new Firebase(baseUrl),
     activities: new Firebase(baseUrl + "/activities"),
     tasks: new Firebase(baseUrl + "/tasks"),
+    activityHistory: new Firebase(baseUrl + "/activityHistory"),
     people: new Firebase(baseUrl + "/people"),
     events: {
         valueChanged: 'value',

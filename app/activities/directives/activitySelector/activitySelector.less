@@ -12,6 +12,7 @@ activity-selector {
 
     category {
       display: inline-block;
+      cursor: pointer;
       border: solid 1px #d2d2d2;
       border-radius: 4px 4px 0 0;
       padding: 5px;
@@ -70,17 +71,7 @@ activity-selector {
       display: block;
       overflow: auto;
       padding: 0 10px;
-
-      activity {
-        display: block;
-        border: solid 1px #ccc;
-        border-left: solid 12px #53955a;
-        padding: 5px;
-        background: white;
-        border-radius: 4px 20px 20px 4px;
-        margin-bottom: 10px;
-        font-size: 1.5em;
-      }
+      max-height: calc(~'100vh - 188px');
     }
 
     add-task{
@@ -106,6 +97,7 @@ activity-selector {
 
         div{
           display: inline-block;
+          cursor: pointer;
           padding: 10px;
           background: white;
           border: solid 1px #ccc;

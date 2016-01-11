@@ -1,0 +1,34 @@
+activity{
+  display: block;
+  border: solid 1px #ccc;
+  padding: 5px;
+  background: white;
+  border-radius: 4px 20px 20px 4px;
+  margin-bottom: 10px;
+  font-size: 1.5em;
+
+  &.get-to{
+    border-left: solid 12px #53955a;
+  }
+
+  &.need-to{
+    border-left: solid 12px #953e3c;
+  }
+
+  toolbar{
+    float: right;
+    padding: 0 !important;
+    margin: 0 !important;
+    height: auto;
+
+    i{
+      margin: 3px 20px 0 0 !important;
+      color: #ccc;
+      cursor: pointer;
+
+      &:last-child{
+        margin-right: 6px !important;
+      }
+    }
+  }
+}

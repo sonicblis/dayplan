@@ -4,16 +4,31 @@ day-activity{
   margin-bottom: 8px;
   padding: 4px 8px;
   border-radius: 4px 20px 20px 4px;
-  border-left: solid 12px #53955a;
   font-size: 1.5em;
   position: relative;
   background: white;
 
-  check{
+  &.get-to{
+    border-left: solid 12px #53955a;
+  }
+
+  &.need-to{
+    border-left: solid 12px #953e3c;
+  }
+
+  toolbar{
     position: absolute;
     right: 7px;
-    top: -4px;
-    font-size: 1.4em;
-    color: #ccc;
+    top: 4px;
+
+    i{
+      font-size: 1.4em !important;
+      color: #ccc;
+      margin-right: 16px;
+
+      &:last-child{
+        margin-right: 0;
+      }
+    }
   }
 }

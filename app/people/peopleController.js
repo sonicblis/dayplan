@@ -1,12 +1,15 @@
-app.controller('peopleController', ['$scope', 'peopleProvider', '$rootScope', function ($scope, peopleProvider, $rootScope) {
+app.controller('peopleController', ['$scope', 'peopleProvider', '$rootScope', 'activityProvider', 'logProvider', function ($scope, peopleProvider, $rootScope, activityProvider, logProvider) {
     $scope.people = peopleProvider.people;
     $scope.registerUser = peopleProvider.registerUser;
 
-    //watch for the first person that's added to the collection and auto select them
-    var killWatch = $scope.$watchCollection('people', function(newVal){
-        if (newVal && newVal.length > 0 && !$scope.initialSelected){
+    $scope.selectPerson = function(person){
+        $rootScope.selectedPerson = person;
+        activityProvider.reconcileDaysActivities();
+    };
+
+    peopleProvider.peopleLoaded.then(function(){
+        if ($scope.people.length > 0) {
             $rootScope.selectedPerson = $scope.people[0];
-            killWatch();
         }
     });
 }]);

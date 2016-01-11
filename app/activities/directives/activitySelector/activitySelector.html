@@ -1,30 +1,34 @@
 <div>
     <categories>
-        <category class="active">Need To</category><category>Get To</category>
+        <category ng-click="ui.category = 1;" ng-class="{'active': ui.category == 1}">Need To</category><category ng-click="ui.category = 0;"  ng-class="{'active': ui.category == 0}">Get To</category>
     </categories>
     <content>
         <toolbar ng-if="!ui.addingTask">
             <tool>
-                <i class="fa fa-plus-circle" ng-click="ui.addingTask = true"></i>
+                <i class="fa fa-plus-circle" ng-click="addTask()"></i>
             </tool>
             <tool class="right" ng-repeat="person in people">
                 <img ng-src="{{person.imgPath}}" />
             </tool>
         </toolbar>
         <potential-activities ng-if="!ui.addingTask">
-            <activity ng-repeat="activity in activities | filter:onlyForSelectedUser()" ng-model="activity"></activity>
+            <activity on-edit="edit(activity)"
+                      on-add="addActivity(activity, copy)"
+                      ng-repeat="activity in activities | filter:onlyForSelectedUser()"
+                      ng-class="{'need-to': activity.category == 1, 'get-to': activity.category == 0}"
+                      ng-model="activity"></activity>
         </potential-activities>
         <add-task ng-if="ui.addingTask">
-            <input type="text" ng-model="task.name">
+            <input type="text" ng-model="task.name" ng-model-options="{updateOn: 'blur'}">
             Hours: {{task.hours}} <input type="range" ng-model="task.hours" min="0" max="8" step="1">
             Minutes: {{task.minutes}} <input type="range" ng-model="task.minutes" min="0" max="45" step="15">
             <person-selector ng-model="task.participants"></person-selector>
             <category>
-                <div ng-click="task.category = 0" ng-class="{'selected': task.category == 0}">
-                    Get To
-                </div>
                 <div ng-click="task.category = 1" ng-class="{'selected': task.category == 1}">
                     Need To
+                </div>
+                <div ng-click="task.category = 0" ng-class="{'selected': task.category == 0}">
+                    Get To
                 </div>
             </category>
             Auto Add On

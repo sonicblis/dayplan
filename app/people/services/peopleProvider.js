@@ -1,5 +1,10 @@
-app.service('peopleProvider', ['firebase', 'firebaseArrayWatcher', 'logProvider', '$rootScope', function(firebase, firebaseArrayWatcher, logProvider, $rootScope){
-    _this = this;
+app.service('peopleProvider', ['$q', 'firebase', 'firebaseArrayWatcher', 'logProvider', '$rootScope', function($q, firebase, firebaseArrayWatcher, logProvider, $rootScope){
+    var _this = this;
+
+    var peopleLoadedPromise = $q.defer();
+    this.people = firebaseArrayWatcher.getWatcher(firebase.people, peopleLoadedPromise);
+    this.peopleLoaded = peopleLoadedPromise.promise;
+
     function setUserInfo(authInfo){
         logProvider.info('peopleProvider', 'authInfo provided to setUserInfo', authInfo);
         var userInfo = {
@@ -9,7 +14,6 @@ app.service('peopleProvider', ['firebase', 'firebaseArrayWatcher', 'logProvider'
         logProvider.info('peopleProvider','userInfo from auth', userInfo);
         firebase.people.child(authInfo.uid).set(userInfo);
     };
-    this.people = firebaseArrayWatcher.getWatcher(firebase.people);
     this.registerUser = function(){
         logProvider.info('peopleProvider', 'user being registered');
         firebase.root.unauth();

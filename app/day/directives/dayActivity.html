@@ -2,7 +2,8 @@
     <name>
         {{activity.name}}
     </name>
-    <check>
-        <i class="fa fa-circle-thin"></i>
-    </check>
+    <toolbar>
+        <i ng-click="removeActivity(activity)" class="fa fa-share"></i>
+        <i ng-click="completeActivity(activity)" class="fa fa-circle-thin"></i>
+    </toolbar>
 </span>

@@ -2,10 +2,17 @@ app.directive("activitySelector", function () {
     return {
         restrict: 'E',
         templateUrl: 'app/activities/directives/activitySelector/activitySelector.html',
-        controller: ['$scope', 'peopleProvider', 'activityProvider', '$rootScope', function ($scope, peopleProvider, activityProvider, $rootScope) {
+        controller: ['$scope', 'peopleProvider', 'activityProvider', '$rootScope', 'logProvider', function ($scope, peopleProvider, activityProvider, $rootScope, logProvider) {
+            $scope.newTask = {
+                category: 1,
+                hours: 0,
+                minutes: 0,
+                autoDays: []
+            };
             $scope.people = peopleProvider.people;
             $scope.ui = {
-                addingTask: false
+                addingTask: false,
+                category: 1
             };
             $scope.days = [
                 {number: 1, name: 'Mon'},
@@ -17,8 +24,38 @@ app.directive("activitySelector", function () {
                 {number: 0, name: 'Sun'}
             ];
             $scope.activities = activityProvider.potentialActivities;
+            $scope.task = angular.copy($scope.newTask);
+
+            $scope.addTask = function(){
+                $scope.ui.addingTask = true;
+                $scope.task.category = $scope.ui.category;
+                $scope.people.forEach(function(peep){
+                    peep.$picked = $rootScope.selectedPerson.$id == peep.$id;
+                    if (peep.$picked) {
+                        $scope.task.participants = [peep.$id];
+                    }
+                });
+                $scope.days.forEach(function(day){
+                    day.$selected = false;
+                });
+            };
+            $scope.addActivity = function(activity, leaveTask){
+                logProvider.info('activitySelector', 'Adding activity from task list', [activity, leaveTask]);
+                activityProvider.addActivity(activity, leaveTask);
+            };
+            $scope.edit = function(task){
+                $scope.task = task;
+                if ($scope.task.autoDays) {
+                    $scope.days.forEach(function (day) {
+                        day.$selected = task.autoDays.indexOf(day.number) > -1;
+                    });
+                }
+                $scope.people.forEach(function (peep) {
+                    peep.$picked = task.participants.indexOf(peep.$id) > -1;
+                });
+                $scope.ui.addingTask = true;
+            };
             $scope.toggleDay = function(day){
-                $scope.task.autoDays = $scope.task.autoDays || [];
                 var dayIndex = $scope.task.autoDays.indexOf(day.number);
                 if (dayIndex > -1){
                     $scope.task.autoDays.splice(dayIndex, 1);
@@ -29,11 +66,11 @@ app.directive("activitySelector", function () {
                     day.$selected = true;
                 }
             };
-            $scope.newTask = {category: 1, hours: 0, minutes: 0};
-            $scope.task = angular.copy($scope.newTask);
             $scope.onlyForSelectedUser = function(){
                 return function(activity){
-                    return (activity.participants.indexOf($rootScope.selectedPerson.$id) > -1);
+                    return activity.participants.indexOf($rootScope.selectedPerson.$id) > -1 &&
+                        activity.category == $scope.ui.category &&
+                        !activity.assigned;
                 }
             };
             $scope.cancel = function(){
@@ -50,6 +87,17 @@ app.directive("activitySelector", function () {
                     $scope.task = angular.copy($scope.newTask);
                 }
             };
+
+            $scope.$watch('selectedPerson', function(newVal){
+                logProvider.debug('activitySelector', 'selectedPerson watch fired', newVal);
+                if (newVal && newVal.$id){
+                    $scope.task.participants = [newVal.$id];
+                    $scope.people.forEach(function(peep){
+                        peep.$picked = false;
+                    });
+                    newVal.$picked = true;
+                }
+            });
         }],
         link: function (scope, el, attrs) {
 

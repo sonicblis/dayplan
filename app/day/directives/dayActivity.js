@@ -5,8 +5,11 @@ app.directive("dayActivity", function () {
         scope: {
             activity: '=ngModel'
         },
-        controller: ['$scope', function ($scope) {
-
+        controller: ['$scope', '$rootScope', 'activityProvider', 'logProvider', function ($scope, $rootScope, activityProvider, logProvider) {
+            $scope.completeActivity = activityProvider.completeActivity;
+            $scope.removeActivity = function(activity){
+                activityProvider.removeActivity(activity);
+            };
         }],
         link: function (scope, el, attrs) {
 
