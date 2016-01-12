@@ -97,30 +97,64 @@ app.service("activityProvider", ['$q', 'firebase', 'firebaseArrayWatcher', '$roo
         var sourceTask = _this.potentialActivities.find(function(task){
             return task.$id == activity.sourceTask;
         });
+        logProvider.info('activityProvider', 'Using source task for completion tracking', sourceTask);
         if (sourceTask.hours > 0 || sourceTask.minutes > 0){
+            logProvider.info('activityProvider', 'Source task has hours. Tracking...');
+            var activityHistoryPath = firebase.stringify(firebase.activityHistory, sourceTask.$id);
+            var activityMinutes = parseInt(sourceTask.hours) * 60 + parseInt(sourceTask.minutes);
+            var now = new Date();
+            var totals = {
+                minutesThisWeek: !activity.completed ? activityMinutes : 0,
+                lastUpdate: new Date().getTime(),
+                minutesThisMonth: !activity.completed ? activityMinutes : 0,
+                minutesThisYear: !activity.completed ? activityMinutes : 0,
+                minutesTotal: !activity.completed ? activityMinutes : 0
+            };
+            var updates = {};
+
+            //update the task
+            var activityCompletionPath = firebase.stringify(firebase.activities, activity.$id, 'completed');
+            updates[activityCompletionPath] = !activity.completed;
+
+            //update the history to track execution
             firebase.activityHistory.child(sourceTask.$id).once(firebase.events.valueChanged, function(historyItem){
-                var totalMonth = 0,
-                    totalYear = 0,
-                    totalWeek = 0,
-                    total = 0;
+                logProvider.info('activityProvider', 'History item retrieved', historyItem.val());
+                historyItem = historyItem.val();
                 if (historyItem){
-                    totalMonth = historyItem.totalMinutesThisMonth;
-                    totalYear = hisotryItem.totalMinutesThisYear;
-                    totalWeek = historyItem.totalMinutesThisWeek;
-                    total = historyItem.totalMinutes;
+                    var lastUpdate = new Date(historyItem.lastUpdate);
+                    if (!activity.completed)
+                        totals.minutesTotal += historyItem.minutesTotal;
+                    else
+                        totals.minutesTotal = historyItem.minutesTotal - activityMinutes;
+
+                    //check if minutes need to be rolled over
+                    if (lastUpdate.getFullYear() == now.getFullYear()){
+                        if (!activity.completed)
+                            totals.minutesThisYear += historyItem.minutesThisYear;
+                        else
+                            totals.minutesThisYear = historyItem.minutesThisYear - activityMinutes;
+
+                        if (lastUpdate.getMonth() == now.getMonth()){
+                            if (!activity.completed)
+                                totals.minutesThisMonth += historyItem.minutesThisMonth;
+                            else
+                                totals.minutesThisMonth = historyItem.minutesThisMonth - activityMinutes;
+                        }
+                    }
+                    if (lastUpdate.getDay() >= now.getDay()){
+                        if (!activity.completed)
+                            totals.minutesThisWeek += historyItem.minutesTotal;
+                        else
+                            totals.minutesThisWeek = historyItem.minutesTotal - activityMinutes;
+                    }
                 }
-                var updates = {};
-                activity.complete = true;
-                updates[firebase.stringify(firebase.activities), activity.$id] = firebase.cleanAngularObject(activity);
-                updates[firebase.stringify(firebase.activityHistory), activity.sourceTask, 'totalMinutesThisMonth'] = 0;
-                updates[firebase.stringify(firebase.activityHistory), activity.sourceTask, 'totalMinutesThisYear'] = 0;
-                updates[firebase.stringify(firebase.activityHistory), activity.sourceTask, 'totalMinutesThisWeek'] = 0;
-                updates[firebase.stringify(firebase.activityHistory), activity.sourceTask, 'totalMinutes'] = 0;
+                updates[activityHistoryPath] = totals;
                 firebase.root.update(updates);
             });
         }
         else {
-            firebase.activities.child(activity.$id).child('completed').set(true);
+            logProvider.info('activityProvider', 'No hours to track.  Completing activity.');
+            firebase.activities.child(activity.$id).child('completed').set(!activity.completed);
         }
     };
 }]);

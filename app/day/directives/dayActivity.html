@@ -4,6 +4,8 @@
     </name>
     <toolbar>
         <i ng-click="removeActivity(activity)" class="fa fa-share"></i>
-        <i ng-click="completeActivity(activity)" class="fa fa-circle-thin"></i>
+        <i ng-click="completeActivity(activity)"
+           class="fa"
+           ng-class="{'fa-circle-thin': !activity.completed, 'fa-check-circle': activity.completed}"></i>
     </toolbar>
 </span>

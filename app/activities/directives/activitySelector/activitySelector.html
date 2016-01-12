@@ -7,7 +7,10 @@
             <tool>
                 <i class="fa fa-plus-circle" ng-click="addTask()"></i>
             </tool>
-            <tool class="right" ng-repeat="person in people">
+            <tool ng-class="{'toggled': ui.showAutoDay}">
+                <i class="fa fa-calendar-check-o" ng-click="toggleAutoDay()"></i>
+            </tool>
+            <tool ng-if="false" class="right" ng-repeat="person in people">
                 <img ng-src="{{person.imgPath}}" />
             </tool>
         </toolbar>

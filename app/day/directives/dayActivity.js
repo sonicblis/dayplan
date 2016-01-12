@@ -6,7 +6,10 @@ app.directive("dayActivity", function () {
             activity: '=ngModel'
         },
         controller: ['$scope', '$rootScope', 'activityProvider', 'logProvider', function ($scope, $rootScope, activityProvider, logProvider) {
-            $scope.completeActivity = activityProvider.completeActivity;
+            $scope.completeActivity = function(activity){
+                logProvider.info('dayActivity', 'Completing an activity', activity);
+                activityProvider.completeActivity(activity);
+            };
             $scope.removeActivity = function(activity){
                 activityProvider.removeActivity(activity);
             };

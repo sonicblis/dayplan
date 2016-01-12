@@ -12,7 +12,8 @@ app.directive("activitySelector", function () {
             $scope.people = peopleProvider.people;
             $scope.ui = {
                 addingTask: false,
-                category: 1
+                category: 1,
+                showAutoDay: false
             };
             $scope.days = [
                 {number: 1, name: 'Mon'},
@@ -66,11 +67,20 @@ app.directive("activitySelector", function () {
                     day.$selected = true;
                 }
             };
+            $scope.toggleAutoDay = function(){
+                $scope.ui.showAutoDay = !$scope.ui.showAutoDay;
+            };
             $scope.onlyForSelectedUser = function(){
                 return function(activity){
-                    return activity.participants.indexOf($rootScope.selectedPerson.$id) > -1 &&
+                    var shouldShow = activity.participants.indexOf($rootScope.selectedPerson.$id) > -1 &&
                         activity.category == $scope.ui.category &&
                         !activity.assigned;
+                    if (shouldShow){
+                        if (!$scope.ui.showAutoDay){
+                            shouldShow = !activity.autoDays || activity.autoDays.length == 0;
+                        }
+                    }
+                    return shouldShow;
                 }
             };
             $scope.cancel = function(){
