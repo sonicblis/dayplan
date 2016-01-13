@@ -15,10 +15,6 @@ person-list {
     border-radius: 2.5em 0 0 2.5em;
     background: #ccc;
     color: white;
-    -webkit-filter: grayscale(1);
-    -webkit-filter: grayscale(100%);
-    filter: gray;
-    filter: grayscale(100%);
 
     i{
       font-size: 2.8em;
@@ -29,15 +25,23 @@ person-list {
     img {
       border-radius: 3em;
       width: 3em;
+      height: 3em;
+      -webkit-filter: grayscale(1);
+      -webkit-filter: grayscale(100%);
+      filter: gray;
+      filter: grayscale(100%);
+      filter: brightness(150%);
     }
 
     &.selected{
       border-right: 0;
       background: @secondary-back;
-      -webkit-filter: grayscale(0);
-      -webkit-filter: grayscale(0);
-      filter: none;
-      filter: grayscale(0);
+      img{
+        -webkit-filter: grayscale(0);
+        -webkit-filter: grayscale(0);
+        filter: none;
+        filter: grayscale(0);
+      }
     }
   }
 }

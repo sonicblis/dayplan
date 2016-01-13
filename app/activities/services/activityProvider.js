@@ -157,4 +157,7 @@ app.service("activityProvider", ['$q', 'firebase', 'firebaseArrayWatcher', '$roo
             firebase.activities.child(activity.$id).child('completed').set(!activity.completed);
         }
     };
+    this.deleteTask = function(task){
+        firebase.tasks.child(task.$id).remove();
+    }
 }]);

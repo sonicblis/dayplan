@@ -2,6 +2,7 @@ activity{
   display: block;
   border: solid 1px #ccc;
   padding: 5px;
+  position: relative;
   background: white;
   border-radius: 4px 20px 20px 4px;
   margin-bottom: 10px;
@@ -16,10 +17,12 @@ activity{
   }
 
   toolbar{
-    float: right;
+    position: absolute !important;
     padding: 0 !important;
     margin: 0 !important;
-    height: auto;
+    height: 29px !important;
+    top: 5px;
+    right: 5px;
 
     i{
       margin: 3px 20px 0 0 !important;

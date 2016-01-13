@@ -22,7 +22,10 @@
                       ng-model="activity"></activity>
         </potential-activities>
         <add-task ng-if="ui.addingTask">
-            <input type="text" ng-model="task.name" ng-model-options="{updateOn: 'blur'}">
+            <input type="text"
+                   ng-model="task.name"
+                   ng-enter="saveTask(task)"
+                   focus-when="ui.addingTask">
             Hours: {{task.hours}} <input type="range" ng-model="task.hours" min="0" max="8" step="1">
             Minutes: {{task.minutes}} <input type="range" ng-model="task.minutes" min="0" max="45" step="15">
             <person-selector ng-model="task.participants"></person-selector>
@@ -38,6 +41,8 @@
             <day-selector>
                 <day-button ng-class="{'selected': day.$selected}" ng-repeat="day in days" ng-click="toggleDay(day)">{{day.name}}</day-button>
             </day-selector>
+            <button ng-click="confirmDelete()" class="left danger" ng-class="{'confirming':ui.confirming}">
+                <div ng-click="deleteTask(task)">Yes</div>{{ui.confirming ? 'Sure?' : 'Delete'}}<div>No</div></button>
             <button ng-click="saveTask(task)" class="primary">Save</button>
             <button ng-click="cancel()" class="warn">Cancel</button>
         </add-task>

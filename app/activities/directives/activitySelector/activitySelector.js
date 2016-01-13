@@ -52,7 +52,9 @@ app.directive("activitySelector", function () {
                     });
                 }
                 $scope.people.forEach(function (peep) {
-                    peep.$picked = task.participants.indexOf(peep.$id) > -1;
+                    if (task.participants) {
+                        peep.$picked = task.participants.indexOf(peep.$id) > -1;
+                    }
                 });
                 $scope.ui.addingTask = true;
             };
@@ -72,7 +74,7 @@ app.directive("activitySelector", function () {
             };
             $scope.onlyForSelectedUser = function(){
                 return function(activity){
-                    var shouldShow = activity.participants.indexOf($rootScope.selectedPerson.$id) > -1 &&
+                    var shouldShow = !activity.participants || activity.participants.indexOf($rootScope.selectedPerson.$id) > -1 &&
                         activity.category == $scope.ui.category &&
                         !activity.assigned;
                     if (shouldShow){
@@ -85,6 +87,7 @@ app.directive("activitySelector", function () {
             };
             $scope.cancel = function(){
                 $scope.ui.addingTask = false;
+                $scope.ui.confirming = false;
                 $scope.task = angular.copy($scope.newTask);
             };
             $scope.saveTask = function(task){
@@ -96,6 +99,19 @@ app.directive("activitySelector", function () {
                     $scope.ui.addingTask = false;
                     $scope.task = angular.copy($scope.newTask);
                 }
+            };
+            $scope.confirmDelete = function(){
+                if (!$scope.ui.confirming){
+                    $scope.ui.confirming = true;
+                }
+                else{
+                    $scope.ui.confirming = false;
+                }
+            };
+            $scope.deleteTask = function(task){
+                activityProvider.deleteTask(task);
+                $scope.ui.confirming = false;
+                $scope.ui.addingTask = false;
             };
 
             $scope.$watch('selectedPerson', function(newVal){

@@ -155,12 +155,56 @@ activity-selector {
         margin-top: 20px;
         float: right;
         margin-right: 10px;
-        width: 70px;
-        height: 70px;
+        width: 100px;
+        height: 50px;
         border-radius: 305px;
         border: solid 1px #ccc;
         font-size: 1em;
         outline: 0;
+        position: relative;
+        transition: width .25s;
+
+        & > div{
+          position: absolute;
+          display: none;
+          width: 45px;
+          height: 42px;
+          border: solid 1px #ccc;
+          top: 2px;
+          border-radius: 200px;
+          background: white;
+          color: #555;
+          font-weight: bold;
+          line-height: 42px;
+          font-size: 1em;
+
+          &:first-child{
+            left: 2px;
+          }
+
+          &:last-child{
+            right: 2px;
+          }
+        }
+
+        &.confirming{
+          width: 170px;
+          transition: width .25s;
+
+          & > div{
+            display: inline-block;
+          }
+        }
+
+        &.left{
+          float: left;
+        }
+
+        &.danger{
+          background: #a12900;
+          color: white;
+          border-color: #6c2d2b;
+        }
 
         &.warn{
           background: #ffc703;
