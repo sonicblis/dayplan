@@ -1,4 +1,4 @@
 <img ng-repeat="person in people"
-     ng-class="{'selected': person.$picked}"
+     ng-class="{'selected': person[selectionProperty]}"
      ng-src="{{person.imgPath}}"
      ng-click="togglePerson(person)" />

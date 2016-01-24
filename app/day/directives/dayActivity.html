@@ -8,4 +8,7 @@
            class="fa"
            ng-class="{'fa-circle-thin': !activity.completed, 'fa-check-circle': activity.completed}"></i>
     </toolbar>
+    <size-bar ng-style="{'width': calculateWidth(activity) + '%'}">
+        &nbsp;
+    </size-bar>
 </span>

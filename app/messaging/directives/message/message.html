@@ -1,0 +1,18 @@
+<div>
+    <sender>
+        <img ng-src="{{message.from.imgPath}}"/>
+    </sender>
+    <content>
+        <message-text>
+            {{message.from.name}}: {{message.text}}
+        </message-text>
+        <toolbar>
+            <tool>
+                <i class="fa fa-reply"></i>
+            </tool>
+            <tool ng-click="removeMessage(message)">
+                <i class="fa fa-times-circle"></i>
+            </tool>
+        </toolbar>
+    </content>
+</div>

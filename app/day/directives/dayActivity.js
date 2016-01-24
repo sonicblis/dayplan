@@ -13,6 +13,9 @@ app.directive("dayActivity", function () {
             $scope.removeActivity = function(activity){
                 activityProvider.removeActivity(activity);
             };
+            $scope.calculateWidth = function(activity){
+                return (activity.hours > 0 || activity.minutes > 0) ? ((((activity.hours * 60) + activity.minutes) / (8 * 60)) * 100) : 0;
+            }
         }],
         link: function (scope, el, attrs) {
 

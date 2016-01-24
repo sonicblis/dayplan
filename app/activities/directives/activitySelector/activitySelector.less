@@ -79,7 +79,7 @@ activity-selector {
       max-height: calc(~'100vh - 188px');
     }
 
-    add-task{
+    add-task, message-composer{
       padding: 10px;
       display: block;
       overflow: auto;
@@ -89,10 +89,17 @@ activity-selector {
         font-size: 1.5em;
         font-family: inherit;
         border: solid 1px #ccc;
-        border-left: solid 12px #53955A;
         width: calc(100% - 5px);
         border-radius: 4px 20px 20px 4px;
         outline: 0;
+
+        &.need-to{
+          border-left: solid 12px #953e3c;
+        }
+
+        &.get-to{
+          border-left: solid 12px #53955A;
+        }
       }
 
       category{

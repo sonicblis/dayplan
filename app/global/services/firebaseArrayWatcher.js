@@ -10,12 +10,12 @@ app.service('firebaseArrayWatcher', ['firebase', '$firebaseArray', 'logProvider'
                 });
             }
             fbArray.$watch(function(args){
-                logProvider.debug('firebaseArrayWatcher', 'Got a firebase array event', args);
+                //logProvider.debug('firebaseArrayWatcher', 'Got a firebase array event', args);
                 if (args.event === firebase.events.childAdded){
                     watchers[firebaseRef].push(fbArray.$getRecord(args.key));
                 }
                 else if (args.event === firebase.events.childRemoved){
-                    logProvider.info('firebaseArrayWatcher', 'Removing array entry with key', args.key);
+                    //logProvider.info('firebaseArrayWatcher', 'Removing array entry with key', args.key);
                     var removedItem = watchers[firebaseRef].find(function(activity){
                         return activity.$id == args.key;
                     });

@@ -24,6 +24,14 @@ app.service("activityProvider", ['$q', 'firebase', 'firebaseArrayWatcher', '$roo
                 }
             }
 
+            //clean up old completed tasks
+            _this.activities.forEach(function(activity){
+                logProvider.debug('activityProvider', 'checking for old done activity', activity);
+                if (_this.activityIsDoneAndOld(activity)){
+                    logProvider.debug('activityProvider', 'activity is old and done, removing it', activity);
+                    _this.deleteCompletedDayActivity(activity);
+                }
+            });
             var selectedUserId = $rootScope.selectedPerson.$id;
             var dateAsDate = new Date(date);
             var currentDay = dateAsDate.getDay(); //today's number
@@ -42,13 +50,7 @@ app.service("activityProvider", ['$q', 'firebase', 'firebaseArrayWatcher', '$roo
                             return activity.sourceTask == potentialActivity.$id;
                         });
                         if (!existingActivity) {
-                            firebase.activities.push({
-                                sourceTask: potentialActivity.$id,
-                                forDate: dateAsDate.getTime(),
-                                name: potentialActivity.name,
-                                user: selectedUserId,
-                                category: potentialActivity.category
-                            });
+                            _this.addActivity(potentialActivity, true);
                         }
                         else {
                             firebase.activities.child(existingActivity.$id).update({name: potentialActivity.name});
@@ -63,6 +65,8 @@ app.service("activityProvider", ['$q', 'firebase', 'firebaseArrayWatcher', '$roo
             sourceTask: activity.$id,
             forDate: $rootScope.selectedDate.getTime(),
             name: activity.name,
+            hours: activity.hours,
+            minutes: activity.minutes,
             user: $rootScope.selectedPerson.$id,
             category: activity.category
         });
@@ -80,9 +84,9 @@ app.service("activityProvider", ['$q', 'firebase', 'firebaseArrayWatcher', '$roo
             dateToCheck = $rootScope.selectedDate;
         }
         var activityDate = new Date(activity.forDate);
-        return activityDate.getFullYear() == dateToCheck.getFullYear() &&
-            activityDate.getDate() == dateToCheck.getDate() &&
-            activityDate.getMonth() == dateToCheck.getMonth();
+        return activityDate.getFullYear() <= dateToCheck.getFullYear() &&
+            activityDate.getDate() <= dateToCheck.getDate() &&
+            activityDate.getMonth() <= dateToCheck.getMonth();
     };
     this.saveTask = function(task){
         if (!task.$id){
@@ -92,7 +96,7 @@ app.service("activityProvider", ['$q', 'firebase', 'firebaseArrayWatcher', '$roo
             firebase.tasks.child(task.$id).set(firebase.cleanAngularObject(angular.copy(task)));
         }
         _this.reconcileDaysActivities();
-    }
+    };
     this.completeActivity = function(activity){
         var sourceTask = _this.potentialActivities.find(function(task){
             return task.$id == activity.sourceTask;
@@ -157,7 +161,31 @@ app.service("activityProvider", ['$q', 'firebase', 'firebaseArrayWatcher', '$roo
             firebase.activities.child(activity.$id).child('completed').set(!activity.completed);
         }
     };
+    this.activityIsDoneAndOld = function(activity){
+        var activityDate = new Date(activity.forDate);
+        return activityDate.getFullYear() <= $rootScope.selectedDate.getFullYear() &&
+            (
+                activityDate.getFullYear() < $rootScope.selectedDate.getFullYear() ||
+                activityDate.getDate() < $rootScope.selectedDate.getDate() ||
+                activityDate.getMonth() < $rootScope.selectedDate.getMonth()
+            ) &&
+            activityDate.getMonth() <= $rootScope.selectedDate.getMonth() &&
+            activity.completed == true;
+    };
+    this.deleteCompletedDayActivity = function(activity){
+        if (activity.completed) {
+            firebase.activities.child(activity.$id).remove();
+            if (activity.sourceTask){
+                var sourceTask = _this.tasks.find(function(task){
+                    return task.$id == activity.sourceTask;
+                });
+                if (sourceTask && sourceTask.hidden == true){
+                    firebase.tasks.child(sourceTask.$id).remove();
+                }
+            }
+        }
+    };
     this.deleteTask = function(task){
         firebase.tasks.child(task.$id).remove();
-    }
+    };
 }]);

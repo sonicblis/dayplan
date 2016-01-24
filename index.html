@@ -18,6 +18,9 @@
         <div ng-click="registerUser()" class="person"><i class="fa fa-plus-circle"></i></div>
     </person-list><person-day ng-controller="activitiesController">
         <day>
+            <messages ng-controller="messagesController">
+                <message ng-repeat="message in messages | filter:forSelectedUser()" ng-model="message"></message>
+            </messages>
             <day-activity ng-repeat="activity in dayActivities | filter:dayAndUserFilter()"
                           ng-model="activity"
                           ng-class="{'need-to': activity.category == 1, 'get-to': activity.category == 0, 'completed': activity.completed}"></day-activity>

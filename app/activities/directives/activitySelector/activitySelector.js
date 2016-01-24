@@ -2,7 +2,7 @@ app.directive("activitySelector", function () {
     return {
         restrict: 'E',
         templateUrl: 'app/activities/directives/activitySelector/activitySelector.html',
-        controller: ['$scope', 'peopleProvider', 'activityProvider', '$rootScope', 'logProvider', function ($scope, peopleProvider, activityProvider, $rootScope, logProvider) {
+        controller: ['$scope', 'peopleProvider', 'activityProvider', 'messageProvider', '$rootScope', 'logProvider', function ($scope, peopleProvider, activityProvider, messageProvider, $rootScope, logProvider) {
             $scope.newTask = {
                 category: 1,
                 hours: 0,
@@ -107,6 +107,18 @@ app.directive("activitySelector", function () {
                 else{
                     $scope.ui.confirming = false;
                 }
+            };
+            $scope.composeMessage = function(){
+                $scope.ui.composingMessage = true;
+                $scope.message = {from: $rootScope.selectedPerson};
+            };
+            $scope.sendMessage = function(message){
+                messageProvider.sendMessage(message);
+                $scope.ui.composingMessage = false;
+            };
+            $scope.cancelMessage = function(){
+                $scope.ui.composingMessage = false;
+                $scope.message = {};
             };
             $scope.deleteTask = function(task){
                 activityProvider.deleteTask(task);

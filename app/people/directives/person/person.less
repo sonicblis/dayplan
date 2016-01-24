@@ -1,6 +1,20 @@
 @import '../../../../styles/colors';
 
-person-list {
+person, .person {
+  padding: 5px 5px 0px 5px;
+  height: 55px;
+  display: block;
+  color: white;
+
+  img{
+    border: solid 1px #555;
+    border-radius: 3em;
+    width: 3em;
+    height: 3em;
+  }
+}
+
+  person-list {
   display: inline-block;
   overflow:auto;
   vertical-align: top;
@@ -8,13 +22,9 @@ person-list {
   z-index: 2;
 
   person, .person {
-    padding: 5px 5px 0px 5px;
-    border: solid 1px #ccc;
-    height: 53px;
-    display: block;
-    border-radius: 2.5em 0 0 2.5em;
     background: #ccc;
-    color: white;
+    border-radius: 2.5em 0 0 2.5em;
+    border: solid 1px #ccc;
 
     i{
       font-size: 2.8em;
@@ -23,9 +33,6 @@ person-list {
     }
 
     img {
-      border-radius: 3em;
-      width: 3em;
-      height: 3em;
       -webkit-filter: grayscale(1);
       -webkit-filter: grayscale(100%);
       filter: gray;

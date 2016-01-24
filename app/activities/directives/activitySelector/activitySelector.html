@@ -10,11 +10,14 @@
             <tool ng-class="{'toggled': ui.showAutoDay}">
                 <i class="fa fa-calendar-check-o" ng-click="toggleAutoDay()"></i>
             </tool>
+            <tool>
+                <i class="fa fa-comment-o" ng-click="composeMessage()"></i>
+            </tool>
             <tool ng-if="false" class="right" ng-repeat="person in people">
                 <img ng-src="{{person.imgPath}}" />
             </tool>
         </toolbar>
-        <potential-activities ng-if="!ui.addingTask">
+        <potential-activities ng-if="!ui.addingTask && !ui.composingMessage">
             <activity on-edit="edit(activity)"
                       on-add="addActivity(activity, copy)"
                       ng-repeat="activity in activities | filter:onlyForSelectedUser()"
@@ -23,12 +26,13 @@
         </potential-activities>
         <add-task ng-if="ui.addingTask">
             <input type="text"
+                   ng-class="{'need-to': ui.category == 1, 'get-to': ui.category == 0}"
                    ng-model="task.name"
                    ng-enter="saveTask(task)"
                    focus-when="ui.addingTask">
             Hours: {{task.hours}} <input type="range" ng-model="task.hours" min="0" max="8" step="1">
             Minutes: {{task.minutes}} <input type="range" ng-model="task.minutes" min="0" max="45" step="15">
-            <person-selector ng-model="task.participants"></person-selector>
+            <person-selector ng-model="task.participants" selection-property="$picked"></person-selector>
             <category>
                 <div ng-click="task.category = 1" ng-class="{'selected': task.category == 1}">
                     Need To
@@ -46,5 +50,14 @@
             <button ng-click="saveTask(task)" class="primary">Save</button>
             <button ng-click="cancel()" class="warn">Cancel</button>
         </add-task>
+        <message-composer ng-if="ui.composingMessage">
+            <input type="text" ng-model="message.text" focus-when="ui.composingMessage">
+            From: <br />
+            <person ng-model="$root.selectedPerson"></person>
+            To: <br />
+            <person-selector ng-model="message.to"></person-selector><br />
+            <button class="primary" ng-click="sendMessage(message)">Send</button>
+            <button class="warn" ng-click="cancelMessage()">Cancel</button>
+        </message-composer>
     </content>
 </div>
