@@ -1,9 +1,9 @@
-<span>
+<div ng-click="selectActivity(activity)">
     <name>
         {{activity.name}}
     </name>
     <toolbar>
-        <i ng-click="removeActivity(activity)" class="fa fa-share"></i>
+        <i ng-click="removeActivity(activity)" class="fa fa-share" ng-show="taskSelectionService.selectedTask == activity"></i>
         <i ng-click="completeActivity(activity)"
            class="fa"
            ng-class="{'fa-circle-thin': !activity.completed, 'fa-check-circle': activity.completed}"></i>
@@ -11,4 +11,4 @@
     <size-bar ng-style="{'width': calculateWidth(activity) + '%'}">
         &nbsp;
     </size-bar>
-</span>
+</div>

@@ -5,7 +5,7 @@ app.directive("dayActivity", function () {
         scope: {
             activity: '=ngModel'
         },
-        controller: ['$scope', '$rootScope', 'activityProvider', 'logProvider', function ($scope, $rootScope, activityProvider, logProvider) {
+        controller: ['$scope', '$rootScope', 'activityProvider', 'logProvider', 'taskSelectionService', function ($scope, $rootScope, activityProvider, logProvider, taskSelectionService) {
             $scope.completeActivity = function(activity){
                 logProvider.info('dayActivity', 'Completing an activity', activity);
                 activityProvider.completeActivity(activity);
@@ -15,7 +15,11 @@ app.directive("dayActivity", function () {
             };
             $scope.calculateWidth = function(activity){
                 return (activity.hours > 0 || activity.minutes > 0) ? ((((activity.hours * 60) + activity.minutes) / (8 * 60)) * 100) : 0;
-            }
+            };
+            $scope.selectActivity = function(activity){
+                taskSelectionService.selectTask(activity);
+            };
+            $scope.taskSelectionService = taskSelectionService;
         }],
         link: function (scope, el, attrs) {
 

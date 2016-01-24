@@ -1,8 +1,10 @@
-<span>
-    {{activity.name}}
-</span>
-<toolbar>
-    <i ng-click="onAdd({activity: activity})" ng-hide="activity.autoDays && activity.autoDays.length > 0" class="fa fa-reply"></i>
-    <i ng-click="onAdd({activity: activity, copy: true})" class="fa fa-reply-all"></i>
-    <i ng-click="onEdit({activity: activity})" class="fa fa-pencil"></i>
-</toolbar>
+<div ng-click="taskSelectionService.selectTask(activity)">
+    <span>
+        {{activity.name}}
+    </span>
+    <toolbar>
+        <i ng-click="onAdd({activity: activity})" ng-hide="taskSelectionService.selectedTask != activity || activity.autoDays && activity.autoDays.length > 0" class="fa fa-reply"></i>
+        <i ng-show="taskSelectionService.selectedTask == activity" ng-click="onAdd({activity: activity, copy: true})" class="fa fa-reply-all"></i>
+        <i ng-show="taskSelectionService.selectedTask == activity" ng-click="onEdit({activity: activity})" class="fa fa-pencil"></i>
+    </toolbar>
+</div>

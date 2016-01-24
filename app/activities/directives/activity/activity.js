@@ -7,8 +7,11 @@ app.directive("activity", function () {
             onAdd: '&'
         },
         templateUrl: 'app/activities/directives/activity/activity.html',
-        controller: ['$scope', function ($scope) {
-
+        controller: ['$scope', 'taskSelectionService', function ($scope, taskSelectionService) {
+            $scope.taskSelectionService = taskSelectionService;
+            $scope.selectTask = function(task){
+                taskSelectionService.selectTask(task);
+            };
         }],
         link: function (scope, el, attrs) {
 

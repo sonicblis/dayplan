@@ -2,7 +2,7 @@ app.directive("activitySelector", function () {
     return {
         restrict: 'E',
         templateUrl: 'app/activities/directives/activitySelector/activitySelector.html',
-        controller: ['$scope', 'peopleProvider', 'activityProvider', 'messageProvider', '$rootScope', 'logProvider', function ($scope, peopleProvider, activityProvider, messageProvider, $rootScope, logProvider) {
+        controller: ['$scope', 'peopleProvider', 'activityProvider', 'messageProvider', '$rootScope', 'taskSelectionService', 'logProvider', function ($scope, peopleProvider, activityProvider, messageProvider, $rootScope, taskSelectionService, logProvider) {
             $scope.newTask = {
                 category: 1,
                 hours: 0,
@@ -59,6 +59,7 @@ app.directive("activitySelector", function () {
                 $scope.ui.addingTask = true;
             };
             $scope.toggleDay = function(day){
+                $scope.task.autoDays = $scope.task.autoDays || [];
                 var dayIndex = $scope.task.autoDays.indexOf(day.number);
                 if (dayIndex > -1){
                     $scope.task.autoDays.splice(dayIndex, 1);
@@ -96,6 +97,7 @@ app.directive("activitySelector", function () {
                 }
                 else{
                     activityProvider.saveTask(task);
+                    taskSelectionService.selectTask(task);
                     $scope.ui.addingTask = false;
                     $scope.task = angular.copy($scope.newTask);
                 }
