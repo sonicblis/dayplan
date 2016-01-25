@@ -91,7 +91,15 @@ app.service("activityProvider", ['$q', 'firebase', 'firebaseArrayWatcher', '$roo
         }
     };
     this.removeActivity = function(activity){
-        firebase.tasks.child(activity.sourceTask).update({assigned: false});
+        logProvider.info('activityProvider', 'removing activity', activity);
+        var task = _this.potentialActivities.find(function(task){
+            return task.$id == activity.sourceTask;
+        });
+        logProvider.info('activityProvider', 'looked for source task in', _this.potentialActivities);
+        logProvider.info('activityProvider', 'looked for source task, found', task);
+        if (task) {
+            firebase.tasks.child(activity.sourceTask).update({assigned: false});
+        }
         firebase.activities.child(activity.$id).remove();
     };
 
@@ -106,15 +114,17 @@ app.service("activityProvider", ['$q', 'firebase', 'firebaseArrayWatcher', '$roo
             activityDate.getMonth() == dateToCheck.getMonth();
     };
     this.saveTask = function(task){
-        task.hours = (task.hours) ? parseInt(task.hours) : 0;
-        task.minutes = (task.minutes) ? parseInt(task.minutes) : 0;
-        if (!task.$id){
-            firebase.tasks.push(firebase.cleanAngularObject(angular.copy(task)));
+        if (task.name && task.participants && task.category) {
+            task.hours = (task.hours) ? parseInt(task.hours) : 0;
+            task.minutes = (task.minutes) ? parseInt(task.minutes) : 0;
+            if (!task.$id) {
+                firebase.tasks.push(firebase.cleanAngularObject(angular.copy(task)));
+            }
+            else {
+                firebase.tasks.child(task.$id).set(firebase.cleanAngularObject(angular.copy(task)));
+            }
+            _this.reconcileDaysActivities();
         }
-        else{
-            firebase.tasks.child(task.$id).set(firebase.cleanAngularObject(angular.copy(task)));
-        }
-        _this.reconcileDaysActivities();
     };
     this.completeActivity = function(activity){
         var sourceTask = _this.potentialActivities.find(function(task){
