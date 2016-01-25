@@ -29,6 +29,7 @@ app.directive("activitySelector", function () {
 
             $scope.addTask = function(){
                 $scope.ui.addingTask = true;
+                $scope.task = angular.copy($scope.newTask);
                 $scope.task.category = $scope.ui.category;
                 $scope.people.forEach(function(peep){
                     peep.$picked = $rootScope.selectedPerson.$id == peep.$id;

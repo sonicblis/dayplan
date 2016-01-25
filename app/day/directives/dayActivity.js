@@ -7,14 +7,17 @@ app.directive("dayActivity", function () {
         },
         controller: ['$scope', '$rootScope', 'activityProvider', 'logProvider', 'taskSelectionService', function ($scope, $rootScope, activityProvider, logProvider, taskSelectionService) {
             $scope.completeActivity = function(activity){
-                logProvider.info('dayActivity', 'Completing an activity', activity);
+                logProvider.info('dayActivity', 'Completing an  activity', activity);
                 activityProvider.completeActivity(activity);
             };
             $scope.removeActivity = function(activity){
                 activityProvider.removeActivity(activity);
             };
             $scope.calculateWidth = function(activity){
-                return (activity.hours > 0 || activity.minutes > 0) ? ((((activity.hours * 60) + activity.minutes) / (8 * 60)) * 100) : 0;
+                var hours = activity.hours ? parseInt(activity.hours) : 0;
+                var minutes = activity.minutes ? parseInt(activity.minutes) : 0;
+                var total = (hours > 0 || minutes > 0) ? ((((hours * 60) + minutes) / (8 * 60)) * 100) : 0;
+                return (total > 100) ? 100 : total;
             };
             $scope.selectActivity = function(activity){
                 taskSelectionService.selectTask(activity);

@@ -18,6 +18,11 @@
         <div ng-click="registerUser()" class="person"><i class="fa fa-plus-circle"></i></div>
     </person-list><person-day ng-controller="activitiesController">
         <day>
+            <day-picker>
+                <i class="fa fa-arrow-circle-left" ng-show="selectedDayIsNotToday()" ng-click="goBackInTime()"></i>
+                {{selectedDayIsNotToday() ? ($root.selectedDate | date:"EEEE") : 'Today'}}
+                <i class="fa fa-arrow-circle-right" ng-click="goForwardInTime()"></i>
+            </day-picker>
             <messages ng-controller="messagesController">
                 <message ng-repeat="message in messages | filter:forSelectedUser()" ng-model="message"></message>
             </messages>

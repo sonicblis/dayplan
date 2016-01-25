@@ -4,6 +4,7 @@ app.controller('peopleController', ['$scope', 'peopleProvider', '$rootScope', 'a
 
     $scope.selectPerson = function(person){
         $rootScope.selectedPerson = person;
+        $rootScope.selectedDate = new Date();
         activityProvider.reconcileDaysActivities();
     };
 

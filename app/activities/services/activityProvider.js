@@ -23,55 +23,70 @@ app.service("activityProvider", ['$q', 'firebase', 'firebaseArrayWatcher', '$roo
                     date = $rootScope.selectedDate;
                 }
             }
-
-            //clean up old completed tasks
-            _this.activities.forEach(function(activity){
-                logProvider.debug('activityProvider', 'checking for old done activity', activity);
-                if (_this.activityIsDoneAndOld(activity)){
-                    logProvider.debug('activityProvider', 'activity is old and done, removing it', activity);
-                    _this.deleteCompletedDayActivity(activity);
-                }
-            });
+            var now = new Date();
+            var todayIsSelected = (
+                $rootScope.selectedDate.getDate() == now.getDate() &&
+                $rootScope.selectedDate.getMonth() == now.getMonth() &&
+                $rootScope.selectedDate.getFullYear() == now.getFullYear()
+            );
             var selectedUserId = $rootScope.selectedPerson.$id;
             var dateAsDate = new Date(date);
             var currentDay = dateAsDate.getDay(); //today's number
             var userPotentialActivities = _this.potentialActivities.filter(function(potentialActivity){
                 return potentialActivity.participants.indexOf(selectedUserId) > -1;
             });
-            var todaysActivitiesForUser = _this.activities.filter(function(activity){
-                return _this.activityIsForDay(activity, dateAsDate) && (activity.user == selectedUserId);
+
+            // loop through all activities for all users, delete old completed ones,
+            // move forward (update date) all incomplete non-autotask, incomplete auto-task
+            // that aren't already in the list with a date today or earlier
+            var autoTasksOnTodayList = [];
+            _this.activities.forEach(function (activity) {
+                activity.$isOld = _this.activityIsOld(activity);
+
+                // REMOVE OLD COMPLETED TASKS
+                if (!activity.user || !activity.forDate || (activity.completed && activity.$isOld)) {
+                    _this.deleteCompletedDayActivity(activity);
+                }
+
+                // MOVE OLD INCOMPLETE TASKS FORWARD
+                else if (activity.$isOld){
+                    firebase.activities.child(activity.$id).child('forDate').set(now.getTime());
+                    autoTasksOnTodayList.push(activity.sourceTask);
+                }
+
+                // GET ALL TASKS THAT ARE ON THE SELECTED DAY'S LIST
+                else if (_this.activityIsForDay(activity)){
+                    autoTasksOnTodayList.push(activity.sourceTask);
+                }
             });
 
             //loop through possible activities and add ones that ain't been added
             userPotentialActivities.forEach(function(potentialActivity){
                 if (potentialActivity.autoDays) {
                     if (potentialActivity.autoDays.indexOf(currentDay) > -1) {
-                        var existingActivity = todaysActivitiesForUser.find(function (activity) {
-                            return activity.sourceTask == potentialActivity.$id;
-                        });
-                        if (!existingActivity) {
-                            _this.addActivity(potentialActivity, true);
-                        }
-                        else {
-                            firebase.activities.child(existingActivity.$id).update({name: potentialActivity.name});
+                        if (autoTasksOnTodayList.indexOf(potentialActivity.$id) == -1) {
+                            _this.addActivity(potentialActivity, true, true);
                         }
                     }
                 }
             });
         });
     };
-    this.addActivity = function(activity, leaveTask){
-        firebase.activities.push({
-            sourceTask: activity.$id,
-            forDate: $rootScope.selectedDate.getTime(),
-            name: activity.name,
-            hours: activity.hours,
-            minutes: activity.minutes,
-            user: $rootScope.selectedPerson.$id,
-            category: activity.category
+    this.addActivity = function(activity, leaveTask, autoAdded){
+        activity.participants.forEach(function(participant){
+            firebase.activities.push({
+                sourceTask: activity.$id,
+                autoAdded: autoAdded ? true : false,
+                forDate: $rootScope.selectedDate.getTime(),
+                name: activity.name,
+                hours: activity.hours,
+                minutes: activity.minutes,
+                user: participant,
+                category: activity.category
+            });
         });
         if (!leaveTask){
-            logProvider.info('activityProvider', 'Told to delete activity on add, so doing so', activity);
+            logProvider.info('activityProvider', 'Told to hide activity on add, so doing so', activity);
             firebase.tasks.child(activity.$id).update({assigned: true});
         }
     };
@@ -79,16 +94,20 @@ app.service("activityProvider", ['$q', 'firebase', 'firebaseArrayWatcher', '$roo
         firebase.tasks.child(activity.sourceTask).update({assigned: false});
         firebase.activities.child(activity.$id).remove();
     };
+
+    //used by day list to filter tasks to show that need to be done today
     this.activityIsForDay = function(activity, dateToCheck){
         if (!dateToCheck){
             dateToCheck = $rootScope.selectedDate;
         }
         var activityDate = new Date(activity.forDate);
-        return activityDate.getFullYear() <= dateToCheck.getFullYear() &&
-            activityDate.getDate() <= dateToCheck.getDate() &&
-            activityDate.getMonth() <= dateToCheck.getMonth();
+        return activityDate.getFullYear() == dateToCheck.getFullYear() &&
+            activityDate.getDate() == dateToCheck.getDate() &&
+            activityDate.getMonth() == dateToCheck.getMonth();
     };
     this.saveTask = function(task){
+        task.hours = (task.hours) ? parseInt(task.hours) : 0;
+        task.minutes = (task.minutes) ? parseInt(task.minutes) : 0;
         if (!task.$id){
             firebase.tasks.push(firebase.cleanAngularObject(angular.copy(task)));
         }
@@ -161,22 +180,23 @@ app.service("activityProvider", ['$q', 'firebase', 'firebaseArrayWatcher', '$roo
             firebase.activities.child(activity.$id).child('completed').set(!activity.completed);
         }
     };
-    this.activityIsDoneAndOld = function(activity){
+    this.activityIsOld = function(activity){
         var activityDate = new Date(activity.forDate);
-        return activityDate.getFullYear() <= $rootScope.selectedDate.getFullYear() &&
+        var now = new Date();
+        logProvider.debug('activityProvider', '    comparing activityDate and rootScope.selectedDate', activityDate);
+        return activityDate.getFullYear() <= now.getFullYear() &&
             (
-                activityDate.getFullYear() < $rootScope.selectedDate.getFullYear() ||
-                activityDate.getDate() < $rootScope.selectedDate.getDate() ||
-                activityDate.getMonth() < $rootScope.selectedDate.getMonth()
+                activityDate.getFullYear() < now.getFullYear() ||
+                activityDate.getDate() < now.getDate() ||
+                activityDate.getMonth() < now.getMonth()
             ) &&
-            activityDate.getMonth() <= $rootScope.selectedDate.getMonth() &&
-            activity.completed == true;
+            activityDate.getMonth() <= now.getMonth();
     };
     this.deleteCompletedDayActivity = function(activity){
         if (activity.completed) {
             firebase.activities.child(activity.$id).remove();
             if (activity.sourceTask){
-                var sourceTask = _this.tasks.find(function(task){
+                var sourceTask = _this.potentialActivities.find(function(task){
                     return task.$id == activity.sourceTask;
                 });
                 if (sourceTask && sourceTask.hidden == true){

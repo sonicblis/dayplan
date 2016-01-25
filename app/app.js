@@ -3,7 +3,7 @@ app.run(['logProvider', function(logProvider){
     logProvider.setLoggingLevels({
         warn: true,
         error: true,
-        debug: true,
+        debug: false,
         info: true
     });
 }]);

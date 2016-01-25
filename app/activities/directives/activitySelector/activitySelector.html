@@ -26,7 +26,7 @@
         </potential-activities>
         <add-task ng-if="ui.addingTask">
             <input type="text"
-                   ng-class="{'need-to': ui.category == 1, 'get-to': ui.category == 0}"
+                   ng-class="{'need-to': task.category == 1, 'get-to': task.category == 0}"
                    ng-model="task.name"
                    ng-enter="saveTask(task)"
                    focus-when="ui.addingTask">

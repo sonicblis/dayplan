@@ -17,6 +17,32 @@ person-day{
     overflow: auto;
     width: calc(~'100vw / 2 - 50px');
     height: calc(~'100vh - 40px');
+
+    day-picker{
+      display: block;
+      text-align: center;
+      overflow: auto;
+      padding: 5px;
+      border: solid 1px #ccc;
+      background: #eee;
+      border-radius: 200px;
+      margin-bottom: 10px;
+      font-size: 1.3em;
+
+      i{
+        font-size: 1.38em !important;
+        margin: 0 3px;
+        color: #ccc;
+
+        &:first-child{
+          float: left;
+        }
+
+        &:last-child{
+          float: right;
+        }
+      }
+    }
   }
 
   day-info {
