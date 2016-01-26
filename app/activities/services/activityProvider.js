@@ -35,19 +35,19 @@ app.service("activityProvider", ['$q', 'firebase', 'firebaseArrayWatcher', '$roo
                 });
 
                 // loop through all activities for all users, delete old completed ones,
-                // move forward (update date) all incomplete non-autotask, incomplete auto-task
-                // that aren't already in the list with a date today or earlier
+                // move forward (update date) all incomplete non-autotask
                 var autoTasksOnTodayList = [];
                 _this.activities.forEach(function (activity) {
-                    activity.$isOld = _this.activityIsOlderThan(activity, 7); // Leave tasks around for 7 days
+                    activity.$isExpired = _this.activityIsOlderThan(activity, 7); // Leave tasks around for 7 days
+                    activity.$isOld = _this.activityIsOld(activity);
 
                     // REMOVE OLD COMPLETED TASKS
-                    if (!activity.user || !activity.forDate || (activity.completed && activity.$isOld)) {
+                    if (!activity.user || !activity.forDate || (activity.completed && activity.$isExpired)) {
                         _this.deleteCompletedDayActivity(activity);
                     }
 
                     // MOVE OLD INCOMPLETE TASKS FORWARD
-                    else if (activity.$isOld && !activity.autoAdded) {
+                    else if (!activity.completed && activity.$isOld && !activity.autoAdded) {
                         firebase.activities.child(activity.$id).child('forDate').set(now.getTime());
                         autoTasksOnTodayList.push(activity.sourceTask);
                     }
@@ -113,7 +113,7 @@ app.service("activityProvider", ['$q', 'firebase', 'firebaseArrayWatcher', '$roo
             activityDate.getMonth() == dateToCheck.getMonth();
     };
     this.saveTask = function(task){
-        if (task.name && task.participants && task.category) {
+        if (task.name && task.participants) {
             task.hours = (task.hours) ? parseInt(task.hours) : 0;
             task.minutes = (task.minutes) ? parseInt(task.minutes) : 0;
             if (!task.$id) {
