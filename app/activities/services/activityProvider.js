@@ -23,53 +23,52 @@ app.service("activityProvider", ['$q', 'firebase', 'firebaseArrayWatcher', '$roo
                     date = $rootScope.selectedDate;
                 }
             }
-            var now = new Date();
-            var todayIsSelected = (
-                $rootScope.selectedDate.getDate() == now.getDate() &&
-                $rootScope.selectedDate.getMonth() == now.getMonth() &&
-                $rootScope.selectedDate.getFullYear() == now.getFullYear()
-            );
-            var selectedUserId = $rootScope.selectedPerson.$id;
-            var dateAsDate = new Date(date);
-            var currentDay = dateAsDate.getDay(); //today's number
-            var userPotentialActivities = _this.potentialActivities.filter(function(potentialActivity){
-                return potentialActivity.participants.indexOf(selectedUserId) > -1;
-            });
 
-            // loop through all activities for all users, delete old completed ones,
-            // move forward (update date) all incomplete non-autotask, incomplete auto-task
-            // that aren't already in the list with a date today or earlier
-            var autoTasksOnTodayList = [];
-            _this.activities.forEach(function (activity) {
-                activity.$isOld = _this.activityIsOld(activity);
+            var isHistoric = _this.dateIsBeforeToday(date);
+            if (!isHistoric) {
+                var now = new Date();
+                var selectedUserId = $rootScope.selectedPerson.$id;
+                var dateAsDate = new Date(date);
+                var currentDay = dateAsDate.getDay(); //today's number
+                var userPotentialActivities = _this.potentialActivities.filter(function (potentialActivity) {
+                    return potentialActivity.participants.indexOf(selectedUserId) > -1;
+                });
 
-                // REMOVE OLD COMPLETED TASKS
-                if (!activity.user || !activity.forDate || (activity.completed && activity.$isOld)) {
-                    _this.deleteCompletedDayActivity(activity);
-                }
+                // loop through all activities for all users, delete old completed ones,
+                // move forward (update date) all incomplete non-autotask, incomplete auto-task
+                // that aren't already in the list with a date today or earlier
+                var autoTasksOnTodayList = [];
+                _this.activities.forEach(function (activity) {
+                    activity.$isOld = _this.activityIsOlderThan(activity, 7); // Leave tasks around for 7 days
 
-                // MOVE OLD INCOMPLETE TASKS FORWARD
-                else if (activity.$isOld){
-                    firebase.activities.child(activity.$id).child('forDate').set(now.getTime());
-                    autoTasksOnTodayList.push(activity.sourceTask);
-                }
+                    // REMOVE OLD COMPLETED TASKS
+                    if (!activity.user || !activity.forDate || (activity.completed && activity.$isOld)) {
+                        _this.deleteCompletedDayActivity(activity);
+                    }
 
-                // GET ALL TASKS THAT ARE ON THE SELECTED DAY'S LIST
-                else if (_this.activityIsForDay(activity)){
-                    autoTasksOnTodayList.push(activity.sourceTask);
-                }
-            });
+                    // MOVE OLD INCOMPLETE TASKS FORWARD
+                    else if (activity.$isOld && !activity.autoAdded) {
+                        firebase.activities.child(activity.$id).child('forDate').set(now.getTime());
+                        autoTasksOnTodayList.push(activity.sourceTask);
+                    }
 
-            //loop through possible activities and add ones that ain't been added
-            userPotentialActivities.forEach(function(potentialActivity){
-                if (potentialActivity.autoDays) {
-                    if (potentialActivity.autoDays.indexOf(currentDay) > -1) {
-                        if (autoTasksOnTodayList.indexOf(potentialActivity.$id) == -1) {
-                            _this.addActivity(potentialActivity, true, true);
+                    // GET ALL TASKS THAT ARE ON THE SELECTED DAY'S LIST FOR THE SELECTED USER
+                    else if (_this.activityIsForDay(activity) && activity.user == $rootScope.selectedPerson.$id) {
+                        autoTasksOnTodayList.push(activity.sourceTask);
+                    }
+                });
+
+                //loop through possible activities and add ones that ain't been added
+                userPotentialActivities.forEach(function (potentialActivity) {
+                    if (potentialActivity.autoDays) {
+                        if (potentialActivity.autoDays.indexOf(currentDay) > -1) {
+                            if (autoTasksOnTodayList.indexOf(potentialActivity.$id) == -1) {
+                                _this.addActivity(potentialActivity, true, true);
+                            }
                         }
                     }
-                }
-            });
+                });
+            }
         });
     };
     this.addActivity = function(activity, leaveTask, autoAdded){
@@ -103,7 +102,7 @@ app.service("activityProvider", ['$q', 'firebase', 'firebaseArrayWatcher', '$roo
         firebase.activities.child(activity.$id).remove();
     };
 
-    //used by day list to filter tasks to show that need to be done today
+    //used by day list to filter tasks to show what needs to be done today
     this.activityIsForDay = function(activity, dateToCheck){
         if (!dateToCheck){
             dateToCheck = $rootScope.selectedDate;
@@ -192,15 +191,23 @@ app.service("activityProvider", ['$q', 'firebase', 'firebaseArrayWatcher', '$roo
     };
     this.activityIsOld = function(activity){
         var activityDate = new Date(activity.forDate);
-        var now = new Date();
         logProvider.debug('activityProvider', '    comparing activityDate and rootScope.selectedDate', activityDate);
-        return activityDate.getFullYear() <= now.getFullYear() &&
+        return _this.dateIsBeforeToday(activityDate);
+    };
+    this.activityIsOlderThan = function(activity, days){
+        var compDate = new Date();
+        compDate.setDate(compDate.getDate() - days);
+        return new Date(activity.forDate) < compDate;
+    };
+    this.dateIsBeforeToday = function(date){
+        var now = new Date();
+        return date.getFullYear() <= now.getFullYear() &&
             (
-                activityDate.getFullYear() < now.getFullYear() ||
-                activityDate.getDate() < now.getDate() ||
-                activityDate.getMonth() < now.getMonth()
+                date.getFullYear() < now.getFullYear() ||
+                date.getDate() < now.getDate() ||
+                date.getMonth() < now.getMonth()
             ) &&
-            activityDate.getMonth() <= now.getMonth();
+            date.getMonth() <= now.getMonth();
     };
     this.deleteCompletedDayActivity = function(activity){
         if (activity.completed) {

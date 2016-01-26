@@ -9,19 +9,6 @@ day-activity{
   background: white;
   cursor: pointer;
 
-  &.completed{
-    color: #ccc;
-    border-left-color: #ccc !important;
-  }
-
-  &.get-to{
-    border-left: solid 12px #53955a;
-  }
-
-  &.need-to{
-    border-left: solid 12px #953e3c;
-  }
-
   size-bar{
     position: absolute;
     bottom: 0;
@@ -52,4 +39,28 @@ day-activity{
       }
     }
   }
+
+  &.completed{
+    color: #ccc;
+    border-left-color: #ccc !important;
+
+    toolbar{
+      i:first-child{
+        display: none;
+      }
+    }
+
+    size-bar{
+      background: #ccc;
+    }
+  }
+
+  &.get-to{
+    border-left: solid 12px #53955a;
+  }
+
+  &.need-to{
+    border-left: solid 12px #953e3c;
+  }
+
 }

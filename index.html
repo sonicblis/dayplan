@@ -19,14 +19,14 @@
     </person-list><person-day ng-controller="activitiesController">
         <day>
             <day-picker>
-                <i class="fa fa-arrow-circle-left" ng-show="selectedDayIsNotToday()" ng-click="goBackInTime()"></i>
-                {{selectedDayIsNotToday() ? ($root.selectedDate | date:"EEEE") : 'Today'}}
+                <i class="fa fa-arrow-circle-left" ng-click="goBackInTime()"></i>
+                <day-name ng-click="selectNow()">{{selectedDayIsNotToday() ? ($root.selectedDate | date:"EEEE") : 'Today'}}</day-name>
                 <i class="fa fa-arrow-circle-right" ng-click="goForwardInTime()"></i>
             </day-picker>
             <messages ng-controller="messagesController">
                 <message ng-repeat="message in messages | filter:forSelectedUser()" ng-model="message"></message>
             </messages>
-            <day-activity ng-repeat="activity in dayActivities | filter:dayAndUserFilter()"
+            <day-activity ng-repeat="activity in dayActivities | filter:dayAndUserFilter() | orderBy:completed"
                           ng-model="activity"
                           ng-class="{'need-to': activity.category == 1, 'get-to': activity.category == 0, 'completed': activity.completed}"></day-activity>
         </day>

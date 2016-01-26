@@ -7,13 +7,10 @@ app.controller('activitiesController', ['$scope', 'activityProvider', '$rootScop
     };
     $scope.selectedDayIsNotToday = function(){
         var now = new Date();
-        return (
-            $rootScope.selectedDate > now &&
-            !(
-                $rootScope.selectedDate.getDate() == now.getDate() &&
-                $rootScope.selectedDate.getFullYear() == now.getFullYear() &&
-                $rootScope.selectedDate.getMonth() == now.getMonth()
-            )
+        return  !(
+            $rootScope.selectedDate.getDate() == now.getDate() &&
+            $rootScope.selectedDate.getFullYear() == now.getFullYear() &&
+            $rootScope.selectedDate.getMonth() == now.getMonth()
         );
     };
     $scope.goBackInTime = function(){
@@ -22,6 +19,12 @@ app.controller('activitiesController', ['$scope', 'activityProvider', '$rootScop
     $scope.goForwardInTime = function(){
         $rootScope.selectedDate.setDate($rootScope.selectedDate.getDate() + 1);
         activityProvider.reconcileDaysActivities();
+    };
+    $scope.selectNow = function(){
+        $rootScope.selectedDate = new Date();
+    };
+    $scope.completed = function(activity){
+        return activity.completed == true;
     };
     logProvider.info('dayActivity', 'Selected Date is set to', $rootScope.selectedDate);
     if (!$rootScope.selectedDate){

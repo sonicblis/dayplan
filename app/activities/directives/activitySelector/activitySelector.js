@@ -98,7 +98,6 @@ app.directive("activitySelector", function () {
                 }
                 else{
                     activityProvider.saveTask(task);
-                    taskSelectionService.selectTask(task);
                     $scope.ui.addingTask = false;
                     $scope.task = angular.copy($scope.newTask);
                 }
@@ -140,8 +139,5 @@ app.directive("activitySelector", function () {
                 }
             });
         }],
-        link: function (scope, el, attrs) {
-
-        }
     }
 });
