@@ -1,10 +1,14 @@
-app.controller('activitiesController', ['$scope', 'activityProvider', '$rootScope', 'logProvider', function($scope, activityProvider, $rootScope, logProvider){
-    $scope.dayActivities = activityProvider.activities;
+app.controller('activitiesController', ['$scope', 'activityProvider', '$rootScope', 'logProvider', '$filter', function($scope, activityProvider, $rootScope, logProvider, $filter){
     $scope.dayAndUserFilter = function(){
         return function(activity){
             return activityProvider.activityIsForDay(activity) && activity.user == $rootScope.selectedPerson.$id;
         }
     };
+
+    $scope.$watch(function(){return activityProvider.activities;}, function(newVal){
+        $scope.dayActivities = $filter('filter')(newVal, $scope.dayAndUserFilter);
+    });
+
     $scope.selectedDayIsNotToday = function(){
         var now = new Date();
         return  !(

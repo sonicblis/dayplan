@@ -1,4 +1,4 @@
-var app = angular.module('dayPlan', ['firebase']);
+var app = angular.module('dayPlan', ['firebase', 'ui.sortable']);
 app.run(['logProvider', function(logProvider){
     logProvider.setLoggingLevels({
         warn: true,
