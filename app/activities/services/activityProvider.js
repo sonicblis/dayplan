@@ -7,7 +7,7 @@ app.service("activityProvider", ['$q', 'firebase', 'firebaseArrayWatcher', '$roo
     this.potentialActivitiesLoaded = potentialActivitiesPromise.promise;
     this.everythingLoaded = $q.all([_this.activitiesLoaded, _this.potentialActivitiesLoaded]);
 
-    this.potentialActivities = firebaseArrayWatcher.getWatcher(firebase.tasks, potentialActivitiesPromise);
+    this.potentialActivities = firebaseArrayWatcher.getWatcher(firebase.tasks.orderByChild('priority'), potentialActivitiesPromise);
     this.activities = firebaseArrayWatcher.getWatcher(firebase.activities, activityLoadedPromise);
 
     //this is the place that potentialActivities are automatically added as

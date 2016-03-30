@@ -26,7 +26,7 @@
             <messages ng-controller="messagesController">
                 <message ng-repeat="message in messages | filter:forSelectedUser()" ng-model="message"></message>
             </messages>
-            <div ui-sortable ng-model="dayActivities">
+            <div ui-sortable="sortableConfig" ng-model="dayActivities">
                 <day-activity ng-repeat="activity in dayActivities"
                               activity="activity"
                               ng-class="{'need-to': activity.category == 1, 'get-to': activity.category == 0, 'completed': activity.completed}"></day-activity>
