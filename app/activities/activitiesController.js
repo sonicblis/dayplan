@@ -8,20 +8,18 @@ app.controller('activitiesController', ['$scope', 'activityProvider', '$rootScop
 			return activityProvider.activities;
 		}, function (newVal) {
 			if (newVal && newVal.length && newVal.length > 0) {
-				$scope.dayActivities = $filter('filter')(newVal, $scope.dayAndUserFilter);
-				$scope.dayActivities.sort(function(a,b) {
-					return a.priority - b.priority;
-				});
+				var dayActivities = $filter('filter')(newVal, $scope.dayAndUserFilter);
+				dayActivities = $filter('orderBy')(dayActivities, 'priority');
+				$scope.dayActivities = dayActivities;
 			}
 		});
 		$scope.$watch(function() {
 			return $rootScope.selectedPerson.$id;
 		}, function(newVal){
 			if (newVal) {
-				$scope.dayActivities = $filter('filter')(activityProvider.activities, $scope.dayAndUserFilter);
-				$scope.dayActivities.sort(function(a,b) {
-					return a.priority - b.priority;
-				});
+				var dayActivities = $filter('filter')(activityProvider.activities, $scope.dayAndUserFilter);
+				dayActivities = $filter('orderBy')(dayActivities, 'priority');
+				$scope.dayActivities = dayActivities;
 			}
 		});
 	});

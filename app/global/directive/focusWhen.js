@@ -1,4 +1,4 @@
-app.directive('focusWhen', function($timeout, $parse) {
+app.directive('focusWhen', ['$timeout', '$parse', function($timeout, $parse) {
     return {
         link: function(scope, element, attrs) {
             var model = $parse(attrs.focusWhen);
@@ -11,4 +11,4 @@ app.directive('focusWhen', function($timeout, $parse) {
             });
         }
     };
-});
+}]);
