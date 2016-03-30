@@ -22,6 +22,7 @@ gulp.task('thirdParty', function(){
     gulp.src([
         'node_modules/jquery/dist/jquery.min.js',
         'thirdParty/jquery-ui.min.js',
+        'thirdParty/jquery.ui.touch-punch.min.js',
         'node_modules/angular/angular.min.js',
         'node_modules/angular-ui-sortable/dist/sortable.min.js',
         'thirdParty/firebase.min.js',
