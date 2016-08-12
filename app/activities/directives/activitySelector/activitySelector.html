@@ -24,11 +24,13 @@
                       ng-class="{'need-to': activity.category == 1, 'get-to': activity.category == 0}"
                       ng-model="activity"></activity>
         </potential-activities>
+
+        <!-- Task Editor -->
         <add-task ng-if="ui.addingTask">
             <input type="text"
                    ng-class="{'need-to': task.category == 1, 'get-to': task.category == 0}"
                    ng-model="task.name"
-                   ng-enter="saveTask(task)"
+                   ng-enter="saveTask(task, $event)"
                    focus-when="ui.addingTask">
             Hours: {{task.hours}} <input type="range" ng-model="task.hours" min="0" max="8" step="1">
             Minutes: {{task.minutes}} <input type="range" ng-model="task.minutes" min="0" max="45" step="15">
@@ -50,6 +52,8 @@
             <button ng-click="saveTask(task)" class="primary">Save</button>
             <button ng-click="cancel()" class="warn">Cancel</button>
         </add-task>
+        <!-- End Editor -->
+
         <message-composer ng-if="ui.composingMessage">
             <input type="text" ng-model="message.text" focus-when="ui.composingMessage">
             From: <br />

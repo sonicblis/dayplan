@@ -92,12 +92,12 @@ app.directive("activitySelector", function () {
                 $scope.ui.confirming = false;
                 $scope.task = angular.copy($scope.newTask);
             };
-            $scope.saveTask = function(task){
+            $scope.saveTask = function(task, $event){
                 if (task.participants.length == 0){
                     alert('Pick someone to participate in this task first');
                 }
                 else{
-                    activityProvider.saveTask(task);
+                    activityProvider.saveTask(task, $event.shiftKey);
                     $scope.ui.addingTask = false;
                     $scope.task = angular.copy($scope.newTask);
                 }

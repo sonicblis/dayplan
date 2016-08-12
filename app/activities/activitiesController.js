@@ -22,6 +22,16 @@ app.controller('activitiesController', ['$scope', 'activityProvider', '$rootScop
 				$scope.dayActivities = dayActivities;
 			}
 		});
+		$scope.$watch(function() {
+			return $rootScope.selectedDate.getDate();
+		}, function(newVal, oldVal){
+			if (newVal) {
+				var dayActivities = $filter('filter')(activityProvider.activities, $scope.dayAndUserFilter);
+				dayActivities = $filter('orderBy')(dayActivities, 'priority');
+				console.log('setting todays stuff');
+				$scope.dayActivities = dayActivities;
+			}
+		});
 	});
 
 	$scope.sortableConfig = {
@@ -44,6 +54,7 @@ app.controller('activitiesController', ['$scope', 'activityProvider', '$rootScop
 	};
 	$scope.goBackInTime = function () {
 		$rootScope.selectedDate.setDate($rootScope.selectedDate.getDate() - 1);
+		activityProvider.reconcileDaysActivities();
 	};
 	$scope.goForwardInTime = function () {
 		$rootScope.selectedDate.setDate($rootScope.selectedDate.getDate() + 1);
@@ -51,6 +62,7 @@ app.controller('activitiesController', ['$scope', 'activityProvider', '$rootScop
 	};
 	$scope.selectNow = function () {
 		$rootScope.selectedDate = new Date();
+		activityProvider.reconcileDaysActivities();
 	};
 	$scope.completed = function (activity) {
 		return activity.completed == true;

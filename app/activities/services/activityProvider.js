@@ -1,4 +1,4 @@
-app.service("activityProvider", ['$q', 'firebase', 'firebaseArrayWatcher', '$rootScope', 'logProvider', function($q, firebase, firebaseArrayWatcher, $rootScope, logProvider){
+app.service("activityProvider", ['$q', 'firebase', 'firebaseArrayWatcher', '$rootScope', 'logProvider', '$timeout', function($q, firebase, firebaseArrayWatcher, $rootScope, logProvider, $timeout){
     var _this = this;
     var activityLoadedPromise = $q.defer();
     var potentialActivitiesPromise = $q.defer();
@@ -86,7 +86,9 @@ app.service("activityProvider", ['$q', 'firebase', 'firebaseArrayWatcher', '$roo
         });
         if (!leaveTask){
             logProvider.info('activityProvider', 'Told to hide activity on add, so doing so', activity);
-            firebase.tasks.child(activity.$id).update({assigned: true});
+            $timeout(function(){
+                firebase.tasks.child(activity.$id).update({assigned: true});
+            }, 1);
         }
     };
     this.removeActivity = function(activity){
@@ -112,15 +114,19 @@ app.service("activityProvider", ['$q', 'firebase', 'firebaseArrayWatcher', '$roo
             activityDate.getDate() == dateToCheck.getDate() &&
             activityDate.getMonth() == dateToCheck.getMonth();
     };
-    this.saveTask = function(task){
+    this.saveTask = function(task, addToToday){
         if (task.name && task.participants) {
             task.hours = (task.hours) ? parseInt(task.hours) : 0;
             task.minutes = (task.minutes) ? parseInt(task.minutes) : 0;
             if (!task.$id) {
-                firebase.tasks.push(firebase.cleanAngularObject(angular.copy(task)));
+                var ref = firebase.tasks.push(firebase.cleanAngularObject(angular.copy(task)));
+                task.$id = ref.key();
             }
             else {
                 firebase.tasks.child(task.$id).set(firebase.cleanAngularObject(angular.copy(task)));
+            }
+            if (addToToday){
+                _this.addActivity(task, false, false);
             }
             _this.reconcileDaysActivities();
         }
